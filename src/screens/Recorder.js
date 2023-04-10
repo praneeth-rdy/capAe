@@ -1,19 +1,60 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import RNFS from 'react-native-fs';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
+import Styles from '../styles/screens/Recorder';
+
 function Recorder() {
+    const camera = useRef(null);
+    const [isRecording, setIsRecording] = useState(false);
+
+    // const pictureDirectory = 'CapAe';
+
     const devices = useCameraDevices();
     const device = devices.back;
 
+    const onInitialized = () => { }
+
+    const onError = () => { }
+    const onRecordingFinished = async (video) => {
+        // await RNFS.mkdir(pictureDirectory);
+        const filename = video.path.split('/').pop();
+        console.log(`${RNFS.DownloadDirectoryPath}/${filename}`);
+        await RNFS.moveFile(video.path, `${RNFS.DownloadDirectoryPath}/${filename}`);
+        // console.log(video);
+    }
+    const toggleVideoRecording = () => {
+        console.log('toggle');
+        if (isRecording) {
+            camera.current.stopRecording();
+            setIsRecording(false);
+        } else {
+            camera.current.startRecording({
+                // flash: 'on',
+                onRecordingFinished,
+                onRecordingError: onError,
+            });
+            setIsRecording(true);
+        }
+    }
+
     if (device == null) return <View />
     return (
-        <Camera
-            // style={StyleSheet.absoluteFill}
-            style={{ width: '100%', height: '100%' }}
-            device={device}
-            isActive={true}
-        />
+        <View style={Styles.container}>
+            <Camera
+                ref={camera}
+                // style={StyleSheet.absoluteFill}
+                style={StyleSheet.absoluteFill}
+                device={device}
+                isActive={true}
+                video={true}
+                // audio={true}
+                onInitialized={onInitialized}
+                onError={onError}
+            />
+            <Pressable onPress={toggleVideoRecording} style={[Styles.captureButton, Styles[`captureButton${isRecording?'Active':'Inactive'}`]]} />
+        </View>
     )
 }
 

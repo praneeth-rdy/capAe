@@ -14,15 +14,24 @@ function Recorder() {
     const devices = useCameraDevices();
     const device = devices.back;
 
-    const onInitialized = () => { }
+    const onInitialized = () => {
+        console.log("Initialised");
+    }
 
-    const onError = () => { }
+    const onError = (e) => {
+        console.log("Error", e);
+    }
     const onRecordingFinished = async (video) => {
-        // await RNFS.mkdir(pictureDirectory);
-        const filename = video.path.split('/').pop();
-        console.log(`${RNFS.DownloadDirectoryPath}/${filename}`);
-        await RNFS.moveFile(video.path, `${RNFS.DownloadDirectoryPath}/${filename}`);
-        // console.log(video);
+        try {
+            // await RNFS.mkdir(pictureDirectory);
+            const filename = video.path.split('/').pop();
+            console.log(`${RNFS.DownloadDirectoryPath}/${filename}`);
+            await RNFS.moveFile(video.path, `${RNFS.DownloadDirectoryPath}/${filename}`);
+            // console.log(video);
+            console.log("Video Saved");
+        } catch (error) {
+            console.log(error);
+        }
     }
     const toggleVideoRecording = () => {
         console.log('toggle');

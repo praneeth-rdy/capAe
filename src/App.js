@@ -4,10 +4,11 @@ import {
     View,
 } from 'react-native';
 import Recorder from './screens/Recorder';
+import Home from './screens/Home';
 
 function App() {
     return (
-        <Recorder />
+        <Home />
     )
 }
 

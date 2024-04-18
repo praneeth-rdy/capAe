@@ -5,7 +5,7 @@ const Styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#2196F326'
   },
-  topActionContainer: {},
+  uploadSection: {},
   topAction: {
     paddingHorizontal: 15,
     paddingTop: 20,
@@ -18,6 +18,11 @@ const Styles = StyleSheet.create({
   newVideoForm: {
     paddingHorizontal: 15,
     paddingVertical: 5,
+  },
+  errText: {
+    borderRadius: 5,
+    color: '#EA5455',
+    fontSize: 14,
   },
   textInput: {
     backgroundColor: '#fff',

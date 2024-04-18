@@ -116,7 +116,7 @@ function RecordTile({ recordData }) {
                 <TouchableOpacity
                     activeOpacity={0.8}
                     style={Styles.viewOutputButton}
-                    onPress={() => (handleOutputNavigation)}>
+                    onPress={handleOutputNavigation}>
                     <Text style={Styles.viewOutputButtonText}>
                         Output
                     </Text>

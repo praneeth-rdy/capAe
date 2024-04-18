@@ -5,6 +5,8 @@ import Styles from '../styles/screens/Home';
 import PastRecords from '../components/PastRecords';
 
 function Home() {
+    const [errText, setErrText] = useState('');
+
     const pickVideoFile = () => {
         console.log("Picking a new file");
     }
@@ -15,13 +17,20 @@ function Home() {
 
     return (
         <ScrollView style={Styles.mainContainer}>
-            <View style={Styles.topActionContainer}>
+            <View style={Styles.uploadSection}>
                 <View style={Styles.topAction}>
                     <Text style={Styles.topActionText}>
                         Upload a new video
                     </Text>
                 </View>
                 <View style={Styles.newVideoForm}>
+                    {
+                        errText && (
+                            <Text style={Styles.errText}>
+                                {errText}
+                            </Text>
+                        )
+                    }
                     <TextInput
                         style={Styles.textInput}
                         placeholder='Project name'

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native';
+import { Pressable, StyleSheet, Text, TouchableOpacity, View, Linking, ActivityIndicator } from 'react-native';
 
 import axios from 'axios';
 
@@ -59,12 +59,20 @@ function PastRecords() {
                 </Text>
             </View>
             {
-                pastRecordsData.map((item, index) => (
-                    <RecordTile
-                        key={index}
-                        recordData={item}
-                    />
-                ))
+                loading ? (
+                    <View>
+                        <ActivityIndicator
+                        color={'#0065C1'}
+                        size={25}/>
+                    </View>
+                ) : (
+                    pastRecordsData.map((item, index) => (
+                        <RecordTile
+                            key={index}
+                            recordData={item}
+                        />
+                    ))
+                )
             }
         </View>
     )

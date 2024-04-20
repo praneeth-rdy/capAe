@@ -39,6 +39,24 @@ const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  selectedVideoNameContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#B9B9C3',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 5,
+  },
+  selectedVideoName: {
+    color: '#fff',
+    marginRight: 5,
+    fontSize: 12,
+  },
+  resetVideoIcon: {
+    color: '#fff',
+    fontSize: 14,
+  },
   filePickerText: {
     color: '#B9B9C3',
   },

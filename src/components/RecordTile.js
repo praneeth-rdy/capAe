@@ -94,11 +94,13 @@ function RecordTile({ recordData }) {
                     </Text>
                 </View>
             </View>
-            <View style={Styles.recordRuntimeContainer}>
-                <Text style={Styles.recordRuntime}>
-                    Execution time: {recordData.runtime}
-                </Text>
-            </View>
+            {recordData.runtime && (
+                <View style={Styles.recordRuntimeContainer}>
+                    <Text style={Styles.recordRuntime}>
+                        Execution time: {recordData.runtime}
+                    </Text>
+                </View>
+            )}
             <View style={Styles.createdAtContainer}>
                 <Text style={Styles.createdAtText}>
                     Created on {formatTimeInstance(recordData.createdAt)}

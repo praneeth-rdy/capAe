@@ -5,10 +5,14 @@ import {
 } from 'react-native';
 import Recorder from './screens/Recorder';
 import Home from './screens/Home';
+import { NavigationContainer } from '@react-navigation/native';
+import HomeStack from './navigation/HomeStack';
 
 function App() {
     return (
-        <Home />
+        <NavigationContainer>
+            <HomeStack />
+        </NavigationContainer>
     )
 }
 

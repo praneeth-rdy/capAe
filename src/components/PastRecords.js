@@ -44,7 +44,7 @@ function PastRecords() {
         // console.log(`${baseUrl}/api/v1/parsed-videos`)
         axios.get(allRecordsRoute)
             .then(({ data: response }) => {
-                console.log(response);
+                // console.log(response);
                 setPastRecordsData(response.data);
                 setLoading(false);
             })

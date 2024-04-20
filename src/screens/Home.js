@@ -5,12 +5,13 @@ import axios from 'axios';
 import Styles from '../styles/screens/Home';
 import PastRecords from '../components/PastRecords';
 import VideoSourceModal from '../components/VideoSourceModal';
+import { uploadVideoRoute } from '../apiService';
 
-function Home({ navigation, route }) {
+function Home() {
     const [errText, setErrText] = useState('');
     const [isVideoSourceModalActive, setIsVideoSourceModalActive] = useState(false);
     const [projectName, setProjectName] = useState('');
-    const [video, setVideo] = useState(null);
+    const [video, setVideo] = useState(null); // object should have name and uri props
 
     const openVideoSourceModal = () => {
         if (video) {
@@ -32,6 +33,7 @@ function Home({ navigation, route }) {
         closeVideoSourceModal();
         const options = {
             mediaType: 'video',
+            selectionLimit: 1,
         };
 
         launchImageLibrary(options, (response) => {
@@ -42,33 +44,77 @@ function Home({ navigation, route }) {
             } else if (response.customButton) {
                 console.log('User tapped custom button:', response.customButton);
             } else {
-                console.log('Video picked:', response.assets[0]);
-                // Handle the selected video URI here
+                // console.log('Video picked:', response.assets[0]);
+                setVideo(() => ({
+                    name: response.assets[0].fileName,
+                    uri: response.assets[0].uri,
+                }))
             }
         });
     }
     const recordVideoFromCamera = () => {
         closeVideoSourceModal();
-        navigation.navigate('Recorder');
-    }
+        const options = {
+            mediaType: 'video',
+        };
 
-
-
-    // console.log('route', route)
-    if (route?.params?.video) {
-        // set video uri
-        console.log(route.params)
+        launchCamera(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled picking video');
+            } else if (response.error) {
+                console.log('Error picking video:', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button:', response.customButton);
+            } else {
+                // console.log('Video picked:', response.assets[0]);
+                setVideo(() => ({
+                    name: 'new_video.mp4',
+                    uri: response.assets[0].uri,
+                }))
+                // Handle the selected video URI here
+            }
+        });
     }
 
 
     const handleSubmit = () => {
+        console.log(video, projectName)
+        setErrText('');
         if (!video || !projectName) {
+            setErrText('Please enter a project name and select a video.');
             return;
         }
-        if (!video.videoUri) {
+        if (!video.uri) {
+            setErrText('Please select a video.');
             return;
         }
-        console.log("Submitting your response");
+
+        const formData = new FormData();
+        formData.append('name', projectName);
+        formData.append('video_file', {
+            uri: video.uri,
+            type: 'video/mp4', // Adjust the type according to your video format
+            name: video.name,
+        });
+
+        console.log('before axios')
+
+        axios.post(uploadVideoRoute, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(response => {
+                console.log('Response:', response.data);
+                // Reset form fields and state
+                setProjectName('');
+                setVideo(null);
+                setErrText('');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setErrText('Failed to submit. Please try again.');
+            });
     }
 
     return (
@@ -96,6 +142,8 @@ function Home({ navigation, route }) {
                         <TextInput
                             style={Styles.textInput}
                             placeholder='Project name'
+                            defaultValue={projectName}
+                            onChangeText={(text) => (setProjectName(text))}
                         />
                         <Pressable style={Styles.filePicker} onPress={openVideoSourceModal}>
                             {

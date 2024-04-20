@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/Home';
-import Recorder from '../screens/Recorder';
+// import Recorder from '../screens/Recorder';
 
 const Stack = createStackNavigator();
 
@@ -14,7 +14,7 @@ function HomeStack() {
                     headerShown: false,
                 }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="Recorder"
                 component={Recorder}
                 options={{
@@ -27,7 +27,7 @@ function HomeStack() {
                         fontSize: 20,
                     }
                 }}
-            />
+            /> */}
         </Stack.Navigator>
     );
 }

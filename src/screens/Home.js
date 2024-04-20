@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import Styles from '../styles/screens/Home';
 import PastRecords from '../components/PastRecords';
 import VideoSourceModal from '../components/VideoSourceModal';
 
-function Home() {
+function Home({ navigation, route }) {
     const [errText, setErrText] = useState('');
     const [isVideoSourceModalActive, setIsVideoSourceModalActive] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -27,11 +28,44 @@ function Home() {
         setVideo(null);
     }
 
+    const pickVideoFromGallery = () => {
+        closeVideoSourceModal();
+        const options = {
+            mediaType: 'video',
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled picking video');
+            } else if (response.error) {
+                console.log('Error picking video:', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button:', response.customButton);
+            } else {
+                console.log('Video picked:', response.assets[0]);
+                // Handle the selected video URI here
+            }
+        });
+    }
+    const recordVideoFromCamera = () => {
+        closeVideoSourceModal();
+        navigation.navigate('Recorder');
+    }
+
+
+
+    // console.log('route', route)
+    if (route?.params?.video) {
+        // set video uri
+        console.log(route.params)
+    }
+
+
     const handleSubmit = () => {
-        if(!video || !projectName) {
+        if (!video || !projectName) {
             return;
         }
-        if(!video.videoUri) {
+        if (!video.videoUri) {
             return;
         }
         console.log("Submitting your response");
@@ -42,7 +76,8 @@ function Home() {
             <VideoSourceModal
                 visible={isVideoSourceModalActive}
                 closeModal={closeVideoSourceModal}
-                setVideo={setVideo} />
+                pickVideoFromGallery={pickVideoFromGallery}
+                recordVideoFromCamera={recordVideoFromCamera} />
             <ScrollView style={Styles.mainContainer}>
                 <View style={Styles.uploadSection}>
                     <View style={Styles.topAction}>

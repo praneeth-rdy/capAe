@@ -5,7 +5,7 @@ import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
 import Styles from '../styles/screens/Recorder';
 
-function Recorder() {
+function Recorder({ navigation }) {
     const camera = useRef(null);
     const [isRecording, setIsRecording] = useState(false);
 
@@ -23,12 +23,21 @@ function Recorder() {
     }
     const onRecordingFinished = async (video) => {
         try {
+            console.log(video)
             // await RNFS.mkdir(pictureDirectory);
             const filename = video.path.split('/').pop();
-            console.log(`${RNFS.DownloadDirectoryPath}/${filename}`);
-            await RNFS.moveFile(video.path, `${RNFS.DownloadDirectoryPath}/${filename}`);
+            const filepath = `${RNFS.DownloadDirectoryPath}/${filename}`;
+            console.log(filepath);
+            await RNFS.moveFile(video.path, filepath);
             // console.log(video);
             console.log("Video Saved");
+            navigation.navigate('Home', {
+                video: {
+                    name: 'new_video.mp4',
+                    path: filepath,
+                }
+            });
+
         } catch (error) {
             console.log(error);
         }
@@ -62,7 +71,7 @@ function Recorder() {
                 onInitialized={onInitialized}
                 onError={onError}
             />
-            <Pressable onPress={toggleVideoRecording} style={[Styles.captureButton, Styles[`captureButton${isRecording?'Active':'Inactive'}`]]} />
+            <TouchableOpacity onPress={toggleVideoRecording} style={[Styles.captureButton, Styles[`captureButton${isRecording ? 'Active' : 'Inactive'}`]]} />
         </View>
     )
 }

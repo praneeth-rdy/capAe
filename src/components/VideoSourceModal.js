@@ -5,15 +5,7 @@ import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'reac
 import Styles from '../styles/components/VideoSourceModal';
 
 
-function VideoSourceModal({ visible, closeModal }) {
-
-    const pickVideoFile = () => {
-        console.log("Picking")
-    }
-
-    const openCamera = () => {
-        console.log("Opening cam")
-    }
+function VideoSourceModal({ visible, closeModal, pickVideoFromGallery, recordVideoFromCamera }) {
 
     return (
         <Modal
@@ -23,17 +15,17 @@ function VideoSourceModal({ visible, closeModal }) {
             onRequestClose={closeModal}
         >
             <Pressable style={Styles.modalBackground} onPress={closeModal}>
-                <Pressable style={Styles.modalContent} onPress={() => {}}>
+                <Pressable style={Styles.modalContent} onPress={() => { }}>
                     <Text style={Styles.modalHeader}>
                         Select a video
                     </Text>
                     <View style={Styles.modalBody}>
-                        <TouchableOpacity activeOpacity={0.6} onPress={openCamera}>
+                        <TouchableOpacity activeOpacity={0.6} onPress={recordVideoFromCamera}>
                             <Text style={Styles.videoSourceItem}>
                                 Camera
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.6} onPress={pickVideoFile}>
+                        <TouchableOpacity activeOpacity={0.6} onPress={pickVideoFromGallery}>
                             <Text style={Styles.videoSourceItem}>
                                 Gallery
                             </Text>

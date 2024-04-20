@@ -17,6 +17,16 @@ function HomeStack() {
             <Stack.Screen
                 name="Recorder"
                 component={Recorder}
+                options={{
+                    headerStyle: {
+                        backgroundColor: '#2196F326',
+                    },
+                    headerTintColor: '#0065C1',
+                    headerTitleStyle: {
+                        color: '#0065C1',
+                        fontSize: 20,
+                    }
+                }}
             />
         </Stack.Navigator>
     );

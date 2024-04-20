@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, ScrollView, TextInput } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
@@ -12,6 +12,8 @@ function Home() {
     const [isVideoSourceModalActive, setIsVideoSourceModalActive] = useState(false);
     const [projectName, setProjectName] = useState('');
     const [video, setVideo] = useState(null); // object should have name and uri props
+
+    const pastRecordsRef = useRef(null);
 
     const openVideoSourceModal = () => {
         if (video) {
@@ -103,18 +105,21 @@ function Home() {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-        })
-            .then(response => {
-                console.log('Response:', response.data);
-                // Reset form fields and state
-                setProjectName('');
-                setVideo(null);
-                setErrText('');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                setErrText('Failed to submit. Please try again.');
-            });
+        }).then(response => {
+            console.log('Response:', response.data);
+            // Reset form fields and state
+        }).catch(error => {
+            console.error('Error:', error);
+            setErrText('Failed to submit. Please try again.');
+        });
+        setProjectName('');
+        setVideo(null);
+        setErrText('');
+        setTimeout(() => {
+            if (pastRecordsRef.current) {
+                pastRecordsRef.current.fetchRecords();
+            }
+        }, 500);
     }
 
     return (
@@ -170,7 +175,7 @@ function Home() {
                         </Pressable>
                     </View>
                 </View>
-                <PastRecords />
+                <PastRecords ref={pastRecordsRef} />
             </ScrollView >
         </>
     )

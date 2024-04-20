@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View, Linking, ActivityIndicator } from 'react-native';
 
 import axios from 'axios';
@@ -8,7 +8,7 @@ import Styles from '../styles/components/PastRecords';
 import RecordTile from './RecordTile';
 
 
-function PastRecords() {
+const PastRecords = forwardRef((props, ref) => {
 
     const [pastRecordsData, setPastRecordsData] = useState([
         {
@@ -51,6 +51,12 @@ function PastRecords() {
             .catch(err => console.log(err))
     }
 
+    React.useImperativeHandle(
+      ref,
+      () => ({
+        fetchRecords
+      }));
+
     return (
         <View style={Styles.recordsContainer}>
             <View style={Styles.recordsHeadingContainer}>
@@ -76,6 +82,6 @@ function PastRecords() {
             }
         </View>
     )
-}
+});
 
 export default PastRecords;

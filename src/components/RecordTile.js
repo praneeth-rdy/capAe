@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Linking } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
+import RNFS from 'react-native-fs'
 
 import { getMediaRoutesById } from '../apiService';
+import { showToastShort } from '../utils/toast';
 import Styles from '../styles/components/RecordTile';
 
 
@@ -31,6 +33,33 @@ function RecordTile({ recordData }) {
         }
     }
 
+    const downloadVideo = (url, video_type) => {
+        const timestamp = new Date().getTime(); // Get current timestamp
+        const videoFilename = `${video_type}_video_${timestamp}.mp4`; // Create unique filename with timestamp
+
+        const downloadDest = `${RNFS.DownloadDirectoryPath}/${videoFilename}`;
+
+        console.log(url);
+
+        showToastShort('Downloading the file...');
+
+        RNFS.downloadFile({
+            fromUrl: url,
+            toFile: downloadDest,
+            // progress: (res) => {
+            //     // Handle download progress updates if needed
+            //     const progress = (res.bytesWritten / res.contentLength) * 100;
+            //     console.log(`Progress: ${progress.toFixed(2)}%`);
+            // },
+        }).promise.then((response) => {
+            showToastShort('File downloaded!')
+            console.log('File downloaded!', response, downloadDest);
+        }).catch((err) => {
+            console.log('Download error:', err);
+        });
+    };
+
+
     const formatTimeInstance = (dateString) => {
         const date = new Date(dateString);
 
@@ -56,13 +85,15 @@ function RecordTile({ recordData }) {
         const mediaRoutes = getMediaRoutesById(recordData['_id']);
         switch (recordData.status) {
             case 'in-process':
-                Linking.openURL(mediaRoutes.inputVideoRoute)
+                // Linking.openURL(mediaRoutes.inputVideoRoute)
+                downloadVideo(mediaRoutes.inputVideoRoute, 'input');
                 break;
             case 'done':
-                Linking.openURL(mediaRoutes.inputVideoRoute)
+                // Linking.openURL(mediaRoutes.inputVideoRoute)
+                downloadVideo(mediaRoutes.inputVideoRoute, 'input');
                 break
             default:
-                console.log("This record is in error state")
+                showToastShort('Cannot view input video of an error record');
                 break
         }
     }
@@ -71,13 +102,14 @@ function RecordTile({ recordData }) {
         const mediaRoutes = getMediaRoutesById(recordData['_id']);
         switch (recordData.status) {
             case 'in-process':
-                console.log("This record is still running")
+                showToastShort('Record is still in process');
                 break;
             case 'done':
-                Linking.openURL(mediaRoutes.outputVideoRoute)
+                downloadVideo(mediaRoutes.outputVideoRoute, 'output');
+                // Linking.openURL(mediaRoutes.outputVideoRoute)
                 break
             default:
-                console.log("This record is in error state")
+                showToastShort('Cannot view output video of an error record');
                 break
         }
     }

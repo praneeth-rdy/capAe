@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, TouchableOpacity, View, Linking, ActivityI
 
 import axios from 'axios';
 
-import { allRecordsRoute } from '../apiService';
+import { allRecordsRoute, getBaseUrl } from '../utils/apiService';
 import Styles from '../styles/components/PastRecords';
 import RecordTile from './RecordTile';
 
@@ -39,10 +39,11 @@ const PastRecords = forwardRef((props, ref) => {
         fetchRecords();
     }, [])
 
-    const fetchRecords = () => {
+    const fetchRecords = async () => {
         setLoading(true);
         // console.log(`${baseUrl}/api/v1/parsed-videos`)
-        axios.get(allRecordsRoute)
+        const baseUrl = await getBaseUrl();
+        axios.get(`${baseUrl}${allRecordsRoute}`)
             .then(({ data: response }) => {
                 // console.log(response);
                 setPastRecordsData(response.data);

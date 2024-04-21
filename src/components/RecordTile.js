@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import RNFS from 'react-native-fs'
 
-import { getMediaRoutesById } from '../apiService';
+import { getMediaRoutesById } from '../utils/apiService';
 import { showToastShort } from '../utils/toast';
 import Styles from '../styles/components/RecordTile';
 
@@ -81,8 +81,8 @@ function RecordTile({ recordData }) {
         return formattedDateTime;
     }
 
-    const handleInputNavigation = () => {
-        const mediaRoutes = getMediaRoutesById(recordData['_id']);
+    const handleInputNavigation = async () => {
+        const mediaRoutes = await getMediaRoutesById(recordData['_id']);
         switch (recordData.status) {
             case 'in-process':
                 // Linking.openURL(mediaRoutes.inputVideoRoute)
@@ -98,8 +98,8 @@ function RecordTile({ recordData }) {
         }
     }
 
-    const handleOutputNavigation = () => {
-        const mediaRoutes = getMediaRoutesById(recordData['_id']);
+    const handleOutputNavigation = async () => {
+        const mediaRoutes = await getMediaRoutesById(recordData['_id']);
         switch (recordData.status) {
             case 'in-process':
                 showToastShort('Record is still in process');

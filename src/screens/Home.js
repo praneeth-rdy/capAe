@@ -5,13 +5,15 @@ import axios from 'axios';
 import Styles from '../styles/screens/Home';
 import PastRecords from '../components/PastRecords';
 import VideoSourceModal from '../components/VideoSourceModal';
-import { uploadVideoRoute } from '../apiService';
+import { getBaseUrl, uploadVideoRoute } from '../utils/apiService';
+import { retrieveData, storeData } from '../utils/storage';
 
 function Home() {
     const [errText, setErrText] = useState('');
     const [isVideoSourceModalActive, setIsVideoSourceModalActive] = useState(false);
     const [projectName, setProjectName] = useState('');
     const [video, setVideo] = useState(null); // object should have name and uri props
+    const [serverIpAddress, setServerIpAddress] = useState('');
 
     const pastRecordsRef = useRef(null);
 
@@ -79,7 +81,7 @@ function Home() {
     }
 
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log(video, projectName)
         setErrText('');
         if (!video || !projectName) {
@@ -99,9 +101,10 @@ function Home() {
             name: video.name,
         });
 
-        console.log('before axios')
+        console.log('before axios');
 
-        axios.post(uploadVideoRoute, formData, {
+        const baseUrl = await getBaseUrl();
+        axios.post(`${baseUrl}${uploadVideoRoute}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -121,6 +124,28 @@ function Home() {
             }
         }, 500);
     }
+
+    const saveServerIpAddress = (newIp) => {
+        storeData('server-ip-address', newIp);
+        setServerIpAddress(newIp);
+    }
+
+    const retrieveServerIpAddress = async () => {
+        const val = await retrieveData('server-ip-address');
+        setServerIpAddress(val);
+    }
+
+    useEffect(() => {
+        retrieveServerIpAddress();
+    }, []);
+
+    useEffect(() => {
+        if (pastRecordsRef.current) {
+            pastRecordsRef.current.fetchRecords();
+        }
+    }, [serverIpAddress])
+
+
 
     return (
         <>
@@ -168,6 +193,12 @@ function Home() {
                                 )
                             }
                         </Pressable>
+                        <TextInput
+                            style={Styles.textInput}
+                            placeholder='Server IP Address'
+                            defaultValue={serverIpAddress}
+                            onChangeText={(text) => (saveServerIpAddress(text))}
+                        />
                         <Pressable style={Styles.formSubmitButton} onPress={handleSubmit}>
                             <Text style={Styles.formSubmitText}>
                                 Submit
